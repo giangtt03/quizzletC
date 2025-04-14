@@ -12,6 +12,7 @@ import { MessageSquare, Plus, Search, Tag } from "lucide-react"
 import TopicList from "@/components/forum/topic-list"
 import TopicListSkeleton from "@/components/forum/topic-list-skeleton"
 import { useTopics, useTopicsByTag, useSearchTopics } from "@/hooks/use-forum-data"
+import type { Topic } from "@/types/forum" 
 
 export default function ForumPage() {
   const router = useRouter()
@@ -21,7 +22,6 @@ export default function ForumPage() {
   const [popularTags, setPopularTags] = useState<string[]>([])
   const [isSearching, setIsSearching] = useState(false)
 
-  // Queries
   const { data: allTopics = [], isLoading: isLoadingAllTopics, error: allTopicsError } = useTopics()
 
   const { data: tagTopics = [], isLoading: isLoadingTagTopics, error: tagTopicsError } = useTopicsByTag(selectedTag)
@@ -33,7 +33,6 @@ export default function ForumPage() {
     refetch: refetchSearch,
   } = useSearchTopics(isSearching ? searchQuery : "")
 
-  // Xác định dữ liệu và trạng thái hiện tại dựa trên tab đang active
   const currentTopics = activeTab === "all" ? allTopics : activeTab === "tag" ? tagTopics : searchResults
   const isLoading =
     activeTab === "all" ? isLoadingAllTopics : activeTab === "tag" ? isLoadingTagTopics : isLoadingSearch
@@ -42,7 +41,7 @@ export default function ForumPage() {
   useEffect(() => {
     if (allTopics.length > 0) {
       const allTags: string[] = []
-      allTopics.forEach((topic: any) => {
+      allTopics.forEach((topic: Topic) => {
         if (topic.tags && Array.isArray(topic.tags)) {
           allTags.push(...topic.tags)
         }
@@ -163,7 +162,7 @@ export default function ForumPage() {
                           <h3 className="mb-1 text-lg font-medium">Không có chủ đề nào cho thẻ này</h3>
                           <p className="text-sm text-gray-500 mb-4">Chọn một thẻ khác hoặc tạo chủ đề mới</p>
                           <div className="flex flex-wrap gap-2 justify-center">
-                            {popularTags.map((tag) => (
+                            {popularTags.map((tag: string) => (
                               <Badge
                                 key={tag}
                                 variant="secondary"
@@ -201,7 +200,7 @@ export default function ForumPage() {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {popularTags.length > 0 ? (
-                  popularTags.map((tag) => (
+                  popularTags.map((tag: string) => (
                     <Badge
                       key={tag}
                       variant="secondary"

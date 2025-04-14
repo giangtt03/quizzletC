@@ -95,7 +95,7 @@ export default function TopicList({ topics }: TopicListProps) {
           </div>
           {topic.tags && topic.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
-              {topic.tags.map((tag) => (
+              {topic.tags.map((tag: string) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
                 </Badge>

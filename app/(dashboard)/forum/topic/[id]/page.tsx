@@ -148,6 +148,8 @@ export default function TopicDetailPage() {
     )
   }
 
+  const topicTags = Array.isArray(topic.tags) ? topic.tags : []
+
   return (
     <div className="container mx-auto py-8">
       <Button variant="ghost" className="mb-4" onClick={() => router.push("/forum")}>
@@ -185,9 +187,9 @@ export default function TopicDetailPage() {
                 </CardDescription>
               </div>
             </div>
-            {topic.tags && topic.tags.length > 0 && (
+            {topicTags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
-                {topic.tags.map((tag) => (
+                {topicTags.map((tag: string) => (
                   <Badge key={tag} variant="outline">
                     {tag}
                   </Badge>
@@ -270,7 +272,6 @@ export default function TopicDetailPage() {
         </div>
       </div>
 
-      {/* Dialog xác nhận xóa bình luận */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
