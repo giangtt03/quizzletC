@@ -11,10 +11,15 @@ interface TopicListProps {
 }
 
 export default function TopicList({ topics }: TopicListProps) {
+  // Lọc ra các topic có dữ liệu hợp lệ
+  const validTopics = topics.filter((topic) => topic && topic._id)
+
+  // Hàm lấy chữ cái đầu của tên người dùng
   const getInitials = (username: string) => {
     return username.substring(0, 2).toUpperCase()
   }
 
+  // Lấy avatar của tác giả
   const getAuthorAvatar = (topic: Topic) => {
     if (typeof topic.author !== "string" && topic.author?.avatar) {
       return topic.author.avatar
@@ -22,6 +27,7 @@ export default function TopicList({ topics }: TopicListProps) {
     return null
   }
 
+  // Lấy tên tác giả
   const getAuthorName = (topic: Topic) => {
     if (typeof topic.author !== "string" && topic.author?.username) {
       return topic.author.username
@@ -29,6 +35,7 @@ export default function TopicList({ topics }: TopicListProps) {
     return "Người dùng ẩn danh"
   }
 
+  // Lấy ID của tác giả
   const getAuthorId = (topic: Topic) => {
     if (typeof topic.author !== "string" && topic.author?._id) {
       return topic.author._id
@@ -36,9 +43,19 @@ export default function TopicList({ topics }: TopicListProps) {
     return null
   }
 
+  if (validTopics.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+        <MessageSquare className="mb-2 h-12 w-12 text-gray-400" />
+        <h3 className="text-lg font-medium">Chưa có bài viết nào</h3>
+        <p className="text-sm text-gray-500">Người dùng này chưa đăng bài viết nào</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
-      {topics.map((topic) => (
+      {validTopics.map((topic) => (
         <div
           key={topic._id}
           className="rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
@@ -95,7 +112,7 @@ export default function TopicList({ topics }: TopicListProps) {
           </div>
           {topic.tags && topic.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
-              {topic.tags.map((tag: string) => (
+              {topic.tags.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
                 </Badge>

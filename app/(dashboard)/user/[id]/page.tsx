@@ -19,17 +19,20 @@ export default function UserProfilePage() {
   const userId = params.id as string
   const [activeTab, setActiveTab] = useState("topics")
 
+  // Lấy dữ liệu từ API
   const { data: profileData, isLoading: isLoadingProfile, error: profileError } = useUserProfile(userId)
 
   const { data: topics = [], isLoading: isLoadingTopics, error: topicsError } = useUserTopics(userId)
 
   const { data: comments = [], isLoading: isLoadingComments, error: commentsError } = useUserComments(userId)
 
+  // Xử lý loading state
   const isLoading = isLoadingProfile || isLoadingTopics || isLoadingComments
   const error = profileError || topicsError || commentsError
 
+  // Lấy chữ cái đầu của tên người dùng
   const getInitials = (username: string) => {
-    return username.substring(0, 2).toUpperCase()
+    return username?.substring(0, 2).toUpperCase() || "UN"
   }
 
   if (isLoading) {
@@ -110,17 +113,17 @@ export default function UserProfilePage() {
                 <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <div className="flex items-center rounded-md border p-2">
                     <FileText className="mr-2 h-4 w-4 text-gray-500" />
-                    <span className="text-sm">{stats.topicsCount} bài viết</span>
+                    <span className="text-sm">{stats?.topicsCount || 0} bài viết</span>
                   </div>
                   <div className="flex items-center rounded-md border p-2">
                     <MessageSquare className="mr-2 h-4 w-4 text-gray-500" />
-                    <span className="text-sm">{stats.commentsCount} bình luận</span>
+                    <span className="text-sm">{stats?.commentsCount || 0} bình luận</span>
                   </div>
                   <div className="flex items-center rounded-md border p-2">
                     <Clock className="mr-2 h-4 w-4 text-gray-500" />
                     <span className="text-sm">
                       Hoạt động{" "}
-                      {stats.lastActivity
+                      {stats?.lastActivity
                         ? formatDistanceToNow(new Date(stats.lastActivity), { addSuffix: true, locale: vi })
                         : "không rõ"}
                     </span>
@@ -136,25 +139,25 @@ export default function UserProfilePage() {
                 <TabsTrigger value="comments">Bình luận</TabsTrigger>
               </TabsList>
               <TabsContent value="topics">
-                {topics.length === 0 ? (
+                {topics && topics.length > 0 ? (
+                  <TopicList topics={topics} />
+                ) : (
                   <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
                     <FileText className="mb-2 h-12 w-12 text-gray-400" />
                     <h3 className="text-lg font-medium">Chưa có bài viết nào</h3>
                     <p className="text-sm text-gray-500">Người dùng này chưa đăng bài viết nào</p>
                   </div>
-                ) : (
-                  <TopicList topics={topics} />
                 )}
               </TabsContent>
               <TabsContent value="comments">
-                {comments.length === 0 ? (
+                {comments && comments.length > 0 ? (
+                  <CommentList comments={comments} />
+                ) : (
                   <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
                     <MessageSquare className="mb-2 h-12 w-12 text-gray-400" />
                     <h3 className="text-lg font-medium">Chưa có bình luận nào</h3>
                     <p className="text-sm text-gray-500">Người dùng này chưa bình luận bài viết nào</p>
                   </div>
-                ) : (
-                  <CommentList comments={comments} />
                 )}
               </TabsContent>
             </Tabs>
